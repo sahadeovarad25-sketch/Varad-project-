@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styla Quiz | Tech Challenge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ---------------- SPLASH SCREEN (Insta/WhatsApp Style) ---------------- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #050b14; /* Deep dark background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+        }
+
+        .splash-logo {
+            font-size: 55px;
+            font-weight: 800;
+            background: linear-gradient(45deg, #ff007a, #7928ca, #00d2ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            animation: pulseLogo 1.5s infinite alternate;
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(0,210,255,0.5)); }
+            100% { transform: scale(1.05); filter: drop-shadow(0 0 25px rgba(255,0,122,0.8)); }
+        }
+
+        .splash-footer {
+            position: absolute;
+            bottom: 40px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .splash-footer span {
+            display: block;
+            margin-top: 5px;
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+
+        /* ---------------- MAIN APP UI ---------------- */
+        body {
+            background-color: #050b14;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Floating Background Orbs for Attractive Look */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: floatOrb 10s infinite alternate ease-in-out;
+        }
+        .orb-1 {
+            width: 300px; height: 300px;
+            background: #ff007a;
+            top: -50px; left: -50px;
+            opacity: 0.4;
+        }
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: #7928ca;
+            bottom: -100px; right: -50px;
+            opacity: 0.4;
+            animation-delay: 2s;
+        }
+        .orb-3 {
+            width: 250px; height: 250px;
+            background: #00d2ff;
+            top: 40%; left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.3;
+            animation-duration: 15s;
+        }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        .main-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 1;
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 800px; 
+            border-radius: 30px;
+            padding: 45px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.03);
+            display: none; 
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .active-screen {
+            display: block;
+        }
+
+        h1 {
+            background: linear-gradient(to right, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            text-shadow: 0px 0px 30px rgba(0, 210, 255, 0.3);
+            letter-spacing: 1px;
+        }
+
+        p {
+            font-size: 16px;
+            color: #cbd5e1;
+            margin-bottom: 35px;
+            line-height: 1.7;
+        }
+
+        /* 3D Looking Button */
+        .btn {
+            background: linear-gradient(45deg, #ff007a, #7928ca);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(255, 0, 122, 0.4), inset 0 -3px 0 rgba(0,0,0,0.2);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(255, 0, 122, 0.6), inset 0 -3px 0 rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 5px 10px rgba(255, 0, 122, 0.4), inset 0 -1px 0 rgba(0,0,0,0.2);
+        }
+
+        /* Quiz Specific UI */
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #94a3b8;
+            border-bottom: 2px dashed rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 14px;
+            background-color: rgba(0,0,0,0.5);
+            border-radius: 20px;
+            margin-bottom: 35px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #00d2ff, #7928ca, #ff007a);
+            background-size: 200% 200%;
+            animation: gradientMove 3s ease infinite;
+            transition: width 1s linear;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .question-text {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 35px;
+            line-height: 1.4;
+            color: #ffffff;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f8fafc;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            text-align: left;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: rgba(0, 210, 255, 0.15);
+            border-color: #00d2ff;
+            box-shadow: 0 10px 25px rgba(0, 210, 255, 0.3);
+            transform: translateY(-4px) scale(1.02);
+            color: #ffffff;
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .correct { 
+            background: rgba(0, 201, 147, 0.2) !important; 
+            border-color: #00c993 !important; 
+            color: #00c993 !important;
+            box-shadow: 0 0 25px rgba(0, 201, 147, 0.4) !important;
+        }
+        
+        .wrong { 
+            background: rgba(255, 71, 87, 0.2) !important; 
+            border-color: #ff4757 !important; 
+            color: #ff4757 !important;
+            box-shadow: 0 0 25px rgba(255, 71, 87, 0.4) !important;
+        }
+
+        #feedback-label {
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 25px;
+            min-height: 33px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748b;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            z-index: 1;
+        }
+
+        footer span {
+            background: linear-gradient(to right, #00d2ff, #7928ca);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .card {
+                padding: 35px 20px;
+                border-radius: 20px;
+            }
+            h1 { font-size: 32px; }
+            .question-text { font-size: 20px; }
+            .btn { width: 100%; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-logo">⚡ STYLA QUIZ</div>
+        <div class="splash-footer">
+            from
+            <span>VARAD</span>
+        </div>
+    </div>
+
+    <!-- Background Animated Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="main-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="card active-screen">
+            <h1>STYLA QUIZ</h1>
+            <p>Ready to test your tech knowledge?<br>25 Questions. 30 Seconds each. Let's go!</p>
+            <button class="btn" onclick="startLoadingScreen()">Start Challenge</button>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="card">
+            <h1>Generating Quiz...</h1>
+            <p>Our AI is crafting futuristic questions for you. Hang tight!</p>
+        </div>
+
+        <!-- Error Screen -->
+        <div id="error-screen" class="card">
+            <h1 style="background: #ff4757; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Connection Error!</h1>
+            <p id="error-text">AI server se connect karne mein problem aayi.<br>Please check your internet or API limit.</p>
+            <button class="btn" onclick="showScreen('start-screen')">Try Again</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="card">
+            <div class="header-info">
+                <span id="question-count">Q: 1/25</span>
+                <span id="score-display">Score: 0</span>
+            </div>
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar"></div>
+            </div>
+            <div id="question-text" class="question-text">Loading question...</div>
+            <div class="options-grid" id="options-container">
+                <!-- Options will be injected here via JS -->
+            </div>
+            <div id="feedback-label"></div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="card">
+            <h1>Mission Accomplished!</h1>
+            <h2 id="final-score" style="margin: 20px 0; font-size: 38px; color: #ffffff;">Your Score: 0/25</h2>
+            <p id="result-feedback" style="font-weight: 700; font-size: 22px;"></p>
+            <button class="btn" style="margin-top: 15px;" onclick="showScreen('start-screen')">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Created by <span>Varad Sahadeo</span>
+    </footer>
+
+    <script>
+        const GROQ_API_KEY = "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";
+        
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let timeLeft = 30;
+        let timerId;
+
+        window.onload = () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+            }, 2500);
+        };
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.card').forEach(card => card.classList.remove('active-screen'));
+            document.getElementById(screenId).classList.add('active-screen');
+        }
+
+        async function startLoadingScreen() {
+            showScreen('loading-screen');
+            await fetchQuestions();
+        }
+
+        async function fetchQuestions() {
+            try {
+                const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${GROQ_API_KEY}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "model": "llama-3.1-8b-instant",
+                        "response_format": {"type": "json_object"},
+                        "messages": [
+                            {
+                                "role": "system",
+                                "content": "You are a quiz generator. Always respond in valid JSON object."
+                            },
+                            {
+                                "role": "user",
+                                "content": "Generate exactly 25 random computer science and technology quiz questions. The output MUST be a JSON object containing a list named 'questions'. Like this: {\"questions\": [{\"question\": \"What is RAM?\", \"options\": [\"Option1\", \"Option2\", \"Option3\", \"Option4\"], \"answer\": \"Option1\"}]}"
+                            }
+                        ],
+                        "temperature": 0.6
+                    })
+                });
+
+                const data = await response.json();
+                const rawContent = data.choices[0].message.content;
+                const parsedData = JSON.parse(rawContent);
+                
+                questions = parsedData.questions;
+
+                if (questions && questions.length > 0) {
+                    startQuiz();
+                } else {
+                    throw new Error("Empty Questions");
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                showScreen('error-screen');
+            }
+        }
+
+        function startQuiz() {
+            currentIndex = 0;
+            score = 0;
+            loadQuestion();
+            showScreen('quiz-screen');
+        }
+
+        function loadQuestion() {
+            clearInterval(timerId);
+            timeLeft = 30;
+            
+            const currentQ = questions[currentIndex];
+            
+            document.getElementById('question-count').innerText = `Q: ${currentIndex + 1}/${questions.length}`;
+            document.getElementById('score-display').innerText = `Score: ${score}`;
+            document.getElementById('question-text').innerText = currentQ.question;
+            document.getElementById('feedback-label').innerText = "";
+            
+            const progressBar = document.getElementById('progress-bar');
+            progressBar.style.width = "100%";
+            progressBar.style.background = "linear-gradient(90deg, #00d2ff, #7928ca, #ff007a)";
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = "";
+
+            currentQ.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                
+                const alphabet = String.fromCharCode(65 + index); // A, B, C, D
+                
+                btn.innerHTML = `<span style="color: #00d2ff; font-weight: 800; margin-right: 10px;">${alphabet}.</span> ${option}`;
+                
+                // Dono attributes track karne ke liye set kiye hain
+                btn.setAttribute('data-option', option);
+                btn.setAttribute('data-alphabet', alphabet);
+                
+                btn.onclick = () => checkAnswer(btn, option, currentQ.answer);
+                optionsContainer.appendChild(btn);
+            });
+
+            timerId = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timeLeft--;
+            const percentage = (timeLeft / 30) * 100;
+            const progressBar = document.getElementById('progress-bar');
+            
+            progressBar.style.width = `${percentage}%`;
+
+            if (timeLeft <= 5) {
+                progressBar.style.background = "#ff4757";
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timerId);
+                handleTimeout();
+            }
+        }
+
+        function handleTimeout() {
+            const correctAns = questions[currentIndex].answer;
+            const buttons = document.querySelectorAll('.option-btn');
+            let correctAlphabet = "";
+            
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.getAttribute('data-option') === correctAns) {
+                    btn.classList.add('correct');
+                    correctAlphabet = btn.getAttribute('data-alphabet'); // Sahi Alphabet get kiya
+                } else {
+                    btn.classList.add('wrong');
+                }
+            });
+
+            const feedback = document.getElementById('feedback-label');
+            feedback.innerText = `⏳ Time Up! Right Answer: ${correctAlphabet}. ${correctAns}`;
+            feedback.style.color = "#feca57";
+            feedback.style.textShadow = "0 0 15px rgba(254, 202, 87, 0.4)";
+
+            setTimeout(nextQuestion, 2500);
+        }
+
+        function checkAnswer(selectedBtn, selectedOption, correctAns) {
+            clearInterval(timerId);
+            const buttons = document.querySelectorAll('.option-btn');
+            const feedback = document.getElementById('feedback-label');
+            let correctAlphabet = "";
+
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                if (btn.getAttribute('data-option') === correctAns) {
+                    btn.classList.add('correct');
+                    correctAlphabet = btn.getAttribute('data-alphabet'); // Sahi Alphabet get kiya
+                }
+            });
+
+            if (selectedOption === correctAns) {
+                selectedBtn.classList.add('correct');
+                score++;
+                feedback.innerText = "🔥 Correct Answer!";
+                feedback.style.color = "#00c993";
+                feedback.style.textShadow = "0 0 15px rgba(0, 201, 147, 0.5)";
+            } else {
+                selectedBtn.classList.add('wrong');
+                // Ab yahan Galat hone par Alphabet ke sath answer dikhega
+                feedback.innerText = `❌ Wrong! Right Answer: ${correctAlphabet}. ${correctAns}`;
+                feedback.style.color = "#ff4757";
+                feedback.style.textShadow = "0 0 15px rgba(255, 71, 87, 0.5)";
+            }
+
+            document.getElementById('score-display').innerText = `Score: ${score}`;
+            setTimeout(nextQuestion, 2500);
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            showScreen('result-screen');
+            document.getElementById('final-score').innerText = `Your Score: ${score}/${questions.length}`;
+
+            const feedbackText = document.getElementById('result-feedback');
+            if (score >= 20) {
+                feedbackText.innerText = "🏆 Legendary! You are a Tech Master.";
+                feedbackText.style.color = "#00c993";
+                feedbackText.style.textShadow = "0 0 15px rgba(0, 201, 147, 0.4)";
+            } else if (score >= 12) {
+                feedbackText.innerText = "👍 Great Effort! Keep grinding.";
+                feedbackText.style.color = "#00d2ff";
+                feedbackText.style.textShadow = "0 0 15px rgba(0, 210, 255, 0.4)";
+            } else {
+                feedbackText.innerText = "💻 Needs Work! Time to upgrade your skills.";
+                feedbackText.style.color = "#ff4757";
+                feedbackText.style.textShadow = "0 0 15px rgba(255, 71, 87, 0.4)";
+            }
+        }
+    </script>
+</body>
+</html>
